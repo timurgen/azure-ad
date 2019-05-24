@@ -1,2 +1,2 @@
-Flask
-adal
+Flask==1.0.3
+CherryPy==18.1.1
