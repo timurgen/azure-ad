@@ -26,7 +26,7 @@ def list_users():
     return Response(get_all_users(r.args.get('since')), content_type='application/json')
 
 
-@APP.route('/datasets/group/entities')
+@APP.route('/datasets/group/entities', methods=['GET'])
 @log_request
 def list_groups():
     """
