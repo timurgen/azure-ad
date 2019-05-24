@@ -36,11 +36,30 @@ def create_user_from_array(user_data_array):
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', user_data)
         logging.info(f'user {user_data.get("userPrincipalName")} updated successfully')
 
+    def __try_delete(user_data):
+        """
+        Internal function to 'delete' user (We will not actually perform delete operation but only
+        disable user account by setting accountEnabled = false
+        :param user_data: json object with user details, must contain user identifier
+        (id or userPrincipalName property)
+        :return: void
+        """
+        user_id = user_data['id'] if user_data.get('id') else user_data['userPrincipalName']
+        if not user_id:
+            raise Exception("Couldn't find id for user, at least id or userPrincipalName needed")
+
+        logging.info(f'trying to disable user {user_data.get("userPrincipalName")}')
+        make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', {'accountEnabled': False})
+        logging.info(f'user {user_data.get("userPrincipalName")} disabled successfully')
+
     for user in user_data_array:
+        if '_deleted' in user and user['_deleted']:
+            __try_delete(user)
+            continue
         try:
             __try_create(user)
         except Exception as e:
-            print(e)
+            logging.warning(e)
             __try_update(user)
 
 
