@@ -41,6 +41,10 @@ def list_groups():
 @APP.route('/datasets/user', methods=['POST'])
 @log_request
 def post_users():
+    """
+    Endpoint to synchronize users
+    :return: 200 empty response if everything OK
+    """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     create_user_from_array(json.loads(r.data))
     return Response('')
