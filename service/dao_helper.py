@@ -57,7 +57,7 @@ def make_request(url, method, data=None):
 def get_all_objects(resource_path, delta=None):
     """
     Fetch and stream back objects from MS Graph API
-    :param resource_path path to needed resource in MS Grtaph API
+    :param resource_path path to needed resource in MS Graph API
     :param delta: delta token from last request.
     More about delta https://docs.microsoft.com/en-us/graph/delta-query-users
     :return: generate JSON output with all fetched users
