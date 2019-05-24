@@ -11,8 +11,8 @@ def log_request(request_func):
     """
 
     @wraps(request_func)
-    def logging_decorator():
+    def logging_decorator(*args, **kwargs):
         logging.info(f"{request.method} request for {request.path}")
-        return request_func()
+        return request_func(*args, **kwargs)
 
     return logging_decorator
