@@ -2,7 +2,7 @@ import logging
 import os
 import json
 from flask import Flask, Response, request as r
-from user_dao import get_all_users, create_user_from_array
+from user_dao import get_all_users, sync_user_array
 from group_dao import get_all_groups
 from dao_helper import init_dao
 from logger_helper import log_request
@@ -46,7 +46,7 @@ def post_users():
     :return: 200 empty response if everything OK
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
-    create_user_from_array(json.loads(r.data))
+    sync_user_array(json.loads(r.data))
     return Response('')
 
 

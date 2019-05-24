@@ -4,7 +4,7 @@ from dao_helper import get_all_objects, make_request, GRAPH_URL
 RESOURCE_PATH = '/users/'
 
 
-def create_user_from_array(user_data_array):
+def sync_user_array(user_data_array):
     """
     Function to synchronize user array from Sesam into Azure Active Directory
     This function will try to create user first and update it if create operation failed
