@@ -5,6 +5,14 @@ RESOURCE_PATH = '/users/'
 
 
 def create_user_from_array(user_data_array):
+    """
+    Function to synchronize user array from Sesam into Azure Active Directory
+    This function will try to create user first and update it if create operation failed
+    This function will also disable users with _deleted property = true
+    :param user_data_array: array of user objects
+    :return: nothing if everything is OK
+    """
+
     def __try_create(user_data):
         """
         Internal function to create user
@@ -59,6 +67,7 @@ def create_user_from_array(user_data_array):
         try:
             __try_create(user)
         except Exception as e:
+            # TODO try to update only if error is about "Another object ... already exists."
             logging.warning(e)
             __try_update(user)
 
