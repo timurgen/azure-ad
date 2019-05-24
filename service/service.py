@@ -3,7 +3,7 @@ import os
 import json
 from flask import Flask, Response, request as r
 from user_dao import get_all_users, sync_user_array
-from group_dao import get_all_groups
+from group_dao import get_all_groups, sync_group_array
 from dao_helper import init_dao
 from logger_helper import log_request
 
@@ -42,11 +42,23 @@ def list_groups():
 @log_request
 def post_users():
     """
-    Endpoint to synchronize users
+    Endpoint to synchronize users from Sesam into Azure AD
     :return: 200 empty response if everything OK
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     sync_user_array(json.loads(r.data))
+    return Response('')
+
+
+@APP.route('/datasets/group', methods=['POST'])
+@log_request
+def post_groups():
+    """
+    Endpoint to synchronize groups from Sesam into Azure AD
+    :return: 200 empty response if everything OK
+    """
+    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    sync_group_array(json.loads(r.data))
     return Response('')
 
 
