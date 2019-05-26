@@ -2,8 +2,8 @@ import logging
 import os
 import json
 from flask import Flask, Response, request as r
-from user_dao import get_all_users, sync_user_array
-from group_dao import get_all_groups, sync_group_array
+from user_dao import sync_user_array
+from group_dao import sync_group_array
 from dao_helper import init_dao, get_all_objects
 from logger_helper import log_request
 
