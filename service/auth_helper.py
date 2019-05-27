@@ -4,6 +4,7 @@ import datetime
 
 """
 Base URL where to send token request
+Placeholder contains Azure tenant id
 """
 TOKEN_URL = "https://login.microsoftonline.com/{}/oauth2/v2.0/token"
 
