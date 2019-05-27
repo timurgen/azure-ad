@@ -1,5 +1,5 @@
 import logging
-from dao_helper import get_all_objects, make_request, GRAPH_URL
+from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception
 
 RESOURCE_PATH = '/groups/'
 
@@ -51,9 +51,10 @@ def sync_group_array(group_data_array):
         try:
             __try_create(group)
         except Exception as e:
-            # TODO try to update only if error is about "Another object ... already exists."
-            logging.warning(e)
-            __try_update(group)
+            if is_object_already_exists_exception(e):
+                __try_update(group)
+            else:
+                raise Exception from e
 
 
 def get_all_groups(delta=None):
