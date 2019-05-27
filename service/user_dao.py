@@ -38,7 +38,7 @@ def sync_user_array(user_data_array: list) -> None:
 
         if not user_id:
             raise Exception("Couldn't find id for user, at least id or userPrincipalName needed")
-
+        # we can't and don't need to update user password when syncing user with Azure
         if user_data.get('passwordProfile'):
             del user_data['passwordProfile']
 
@@ -69,7 +69,10 @@ def sync_user_array(user_data_array: list) -> None:
 
         user = clear_sesam_attributes(user)
         try:
-            __try_create(user)
+            if 'id' not in user:
+                __try_create(user)
+            else:
+                __try_update(user)
         except Exception as e:
             if is_object_already_exists_exception(e):
                 __try_update(user)
