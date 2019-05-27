@@ -1,17 +1,46 @@
+#!/usr/bin/env python3
+
 import logging
 import os
 import json
 from flask import Flask, Response, request as r
-from user_dao import sync_user_array
-from group_dao import sync_group_array
+from user_dao import sync_user_array, get_all_users
+from group_dao import sync_group_array, get_all_groups
 from dao_helper import init_dao, get_all_objects
 from logger_helper import log_request
 
-APP = Flask(__name__)
-LOG_LEVEL = os.environ.get('LOG_LEVEL', "INFO")
-PORT = int(os.environ.get('PORT', '5000'))
-CT = 'application/json'
 env = os.environ.get
+
+APP = Flask(__name__)
+LOG_LEVEL = env('LOG_LEVEL', "INFO")
+PORT = int(env('PORT', '5000'))
+CT = 'application/json'
+
+SUPPORTS_SINCE = env('SUPPORTS_SINCE', False)
+
+
+@APP.route('/datasets/user/entities', methods=['GET'])
+@log_request
+def list_users():
+    """
+    Endpoint to fetch all users from Azure AD via MS graph API
+    :request_argument since - delta token returned from last request (if exist)
+    :return: JSON array with fetched users
+    """
+    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    return Response(get_all_users(r.args.get('since')), content_type='application/json')
+
+
+@APP.route('/datasets/group/entities', methods=['GET'])
+@log_request
+def list_groups():
+    """
+    Endpoint to fetch all groups from Azure AD via MS graph API
+    :request_argument since - delta token returned from last request (if exist)
+    :return: JSON array with fetched groups
+    """
+    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    return Response(get_all_groups(r.args.get('since')), content_type='application/json')
 
 
 @APP.route('/datasets/<kind>/entities', methods=['GET'])
@@ -23,7 +52,9 @@ def list_objects(kind):
     :return: JSON array with fetched groups
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
-    return Response(get_all_objects(f'/{kind}/delta', r.args.get('since')), content_type=CT)
+    return Response(
+        get_all_objects(f'/{kind}/{"delta" if SUPPORTS_SINCE else ""}', r.args.get('since')),
+        content_type=CT)
 
 
 @APP.route('/datasets/user', methods=['POST'])
