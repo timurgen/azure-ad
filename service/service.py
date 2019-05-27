@@ -28,7 +28,7 @@ def list_users():
     :return: JSON array with fetched users
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
-    return Response(get_all_users(r.args.get('since')), content_type='application/json')
+    return Response(get_all_users(r.args.get('since')), content_type=CT)
 
 
 @APP.route('/datasets/group/entities', methods=['GET'])
@@ -40,7 +40,7 @@ def list_groups():
     :return: JSON array with fetched groups
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
-    return Response(get_all_groups(r.args.get('since')), content_type='application/json')
+    return Response(get_all_groups(r.args.get('since')), content_type=CT)
 
 
 @APP.route('/datasets/<kind>/entities', methods=['GET'])
