@@ -1,6 +1,7 @@
 import logging
 
-from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception
+from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception, \
+    clear_sesam_attributes
 
 RESOURCE_PATH = '/users/'
 
@@ -66,6 +67,7 @@ def sync_user_array(user_data_array: list) -> None:
             __try_delete(user)
             continue
 
+        user = clear_sesam_attributes(user)
         try:
             __try_create(user)
         except Exception as e:

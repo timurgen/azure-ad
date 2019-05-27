@@ -1,5 +1,6 @@
 import logging
-from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception
+from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception, \
+    clear_sesam_attributes
 
 RESOURCE_PATH = '/groups/'
 
@@ -48,6 +49,8 @@ def sync_group_array(group_data_array):
         if '_deleted' in group and group['_deleted']:
             __try_delete(group)
             continue
+
+        group = clear_sesam_attributes(group)
         try:
             __try_create(group)
         except Exception as e:

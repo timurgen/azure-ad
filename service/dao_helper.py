@@ -106,3 +106,12 @@ def is_object_already_exists_exception(ex: requests.exceptions.HTTPError) -> boo
     if exc_details['error']['details'][0]['code'] == 'ObjectConflict':
         return True
     return False
+
+
+def clear_sesam_attributes(sesam_object: dict):
+    """
+    Return same dict but without properties starting with "_"
+    :param sesam_object: input object from Sesam
+    :return: object cleared from Sesam properties
+    """
+    return {k: v for k, v in sesam_object.items() if not k.startswith('_')}
