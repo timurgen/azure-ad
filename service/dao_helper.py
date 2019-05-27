@@ -103,7 +103,7 @@ def is_object_already_exists_exception(ex: requests.exceptions.HTTPError) -> boo
     :return: True if exception is about already existing object or false otherwise
     """
     exc_details = json.loads(ex.response.text)
-    if exc_details['error']['details'][0]['code'] == 'ObjectConflict':
+    if exc_details.get('error').get('details') and exc_details['error']['details'][0]['code'] == 'ObjectConflict':
         return True
     return False
 
