@@ -1,10 +1,14 @@
+import json
 import logging
+
+import requests
+
 from dao_helper import get_all_objects, make_request, GRAPH_URL
 
 RESOURCE_PATH = '/users/'
 
 
-def sync_user_array(user_data_array):
+def sync_user_array(user_data_array: list) -> None:
     """
     Function to synchronize user array from Sesam into Azure Active Directory
     This function will try to create user first and update it if create operation failed
@@ -13,7 +17,7 @@ def sync_user_array(user_data_array):
     :return: nothing if everything is OK
     """
 
-    def __try_create(user_data):
+    def __try_create(user_data: dict) -> None:
         """
         Internal function to create user
         :param user_data: json object with user details
@@ -23,7 +27,7 @@ def sync_user_array(user_data_array):
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}', 'POST', user_data)
         logging.info(f'user {user_data.get("userPrincipalName")} created successfully')
 
-    def __try_update(user_data):
+    def __try_update(user_data: dict) -> None:
         """
         Internal function to update user
         Update user with passwordProfile is not possible without Directory.AccessAsUser.All
@@ -44,7 +48,7 @@ def sync_user_array(user_data_array):
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', user_data)
         logging.info(f'user {user_data.get("userPrincipalName")} updated successfully')
 
-    def __try_delete(user_data):
+    def __try_delete(user_data: dict) -> None:
         """
         Internal function to 'delete' user (We will not actually perform delete operation but only
         disable user account by setting accountEnabled = false
@@ -60,16 +64,29 @@ def sync_user_array(user_data_array):
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', {'accountEnabled': False})
         logging.info(f'user {user_data.get("userPrincipalName")} disabled successfully')
 
+    def __already_exists(ex: requests.exceptions.HTTPError) -> bool:
+        """
+        Check exception details to find if this is a 'Already exists' exceptions or not
+        :param ex: HTTPError object
+        :return: True if exception is about already existing object or false otherwise
+        """
+        exc_details = json.loads(ex.response.text)
+        if exc_details['error']['details'][0]['code'] == 'ObjectConflict':
+            return True
+        return False
+
     for user in user_data_array:
         if '_deleted' in user and user['_deleted']:
             __try_delete(user)
             continue
+
         try:
             __try_create(user)
         except Exception as e:
-            # TODO try to update only if error is about "Another object ... already exists."
-            logging.warning(e)
-            __try_update(user)
+            if __already_exists(e):
+                __try_update(user)
+            else:
+                raise Exception from e
 
 
 def get_all_users(delta=None):
