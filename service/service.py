@@ -4,6 +4,8 @@ import logging
 import os
 import json
 from flask import Flask, Response, request as r
+
+from str_utils import str_to_bool
 from user_dao import sync_user_array, get_all_users
 from group_dao import sync_group_array, get_all_groups
 from dao_helper import init_dao, get_all_objects
@@ -16,7 +18,7 @@ LOG_LEVEL = env('LOG_LEVEL', "INFO")
 PORT = int(env('PORT', '5000'))
 CT = 'application/json'
 
-SUPPORTS_SINCE = env('SUPPORTS_SINCE', False)
+SUPPORTS_SINCE = str_to_bool(env('SUPPORTS_SINCE', 'false'))
 
 
 @APP.route('/datasets/user/entities', methods=['GET'])
