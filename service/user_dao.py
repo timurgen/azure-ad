@@ -1,9 +1,6 @@
-import json
 import logging
 
-import requests
-
-from dao_helper import get_all_objects, make_request, GRAPH_URL
+from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception
 
 RESOURCE_PATH = '/users/'
 
@@ -64,17 +61,6 @@ def sync_user_array(user_data_array: list) -> None:
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', {'accountEnabled': False})
         logging.info(f'user {user_data.get("userPrincipalName")} disabled successfully')
 
-    def __already_exists(ex: requests.exceptions.HTTPError) -> bool:
-        """
-        Check exception details to find if this is a 'Already exists' exceptions or not
-        :param ex: HTTPError object
-        :return: True if exception is about already existing object or false otherwise
-        """
-        exc_details = json.loads(ex.response.text)
-        if exc_details['error']['details'][0]['code'] == 'ObjectConflict':
-            return True
-        return False
-
     for user in user_data_array:
         if '_deleted' in user and user['_deleted']:
             __try_delete(user)
@@ -83,7 +69,7 @@ def sync_user_array(user_data_array: list) -> None:
         try:
             __try_create(user)
         except Exception as e:
-            if __already_exists(e):
+            if is_object_already_exists_exception(e):
                 __try_update(user)
             else:
                 raise Exception from e

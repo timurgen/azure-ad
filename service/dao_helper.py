@@ -94,3 +94,15 @@ def get_all_objects(resource_path: str, delta=None):
         url = result.get('@odata.nextLink', None)
 
     yield ']'
+
+
+def is_object_already_exists_exception(ex: requests.exceptions.HTTPError) -> bool:
+    """
+    Check exception details to find if this is a 'Already exists' exceptions or not
+    :param ex: HTTPError object
+    :return: True if exception is about already existing object or false otherwise
+    """
+    exc_details = json.loads(ex.response.text)
+    if exc_details['error']['details'][0]['code'] == 'ObjectConflict':
+        return True
+    return False
