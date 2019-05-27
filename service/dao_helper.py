@@ -14,12 +14,12 @@ METADATA = os.environ.get('odata_metadata', 'minimal')
 __token = None
 
 
-def init_dao(client_id, client_secret, tenant_id):
+def init_dao(client_id: str, client_secret: str, tenant_id: str) -> None:
     global __token
     __token = get_token(client_id, client_secret, tenant_id)
 
 
-def make_request(url, method, data=None):
+def make_request(url: str, method: str, data=None) -> dict:
     """
     Function to send request to given URL with given method using given token
     :param url: where to send request
@@ -49,12 +49,12 @@ def make_request(url, method, data=None):
     except requests.exceptions.HTTPError as error:
         logging.error(error)
         logging.error(error.response.text)
-        raise Exception from error
+        raise error
 
     return json.loads(api_call_response.text) if len(api_call_response.text) > 0 else {}
 
 
-def get_all_objects(resource_path, delta=None):
+def get_all_objects(resource_path: str, delta=None):
     """
     Fetch and stream back objects from MS Graph API
     :param resource_path path to needed resource in MS Graph API
