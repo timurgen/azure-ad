@@ -73,6 +73,8 @@ def get_all_objects(resource_path, delta=None):
     while url is not None:
         result = make_request(url, 'get')
 
+        logging.debug(f"Got response: {json.dumps(result, indent=4, sort_keys=True)}")
+
         if result.get('@odata.deltaLink'):
             parsed_url = urlparse(result.get('@odata.deltaLink'))
             query = parse_qs(parsed_url.query)
