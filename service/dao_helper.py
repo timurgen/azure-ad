@@ -5,11 +5,12 @@ import os
 from auth_helper import get_token
 from urllib.parse import urlparse, parse_qs
 
-GRAPH_URL = 'https://graph.microsoft.com/v1.0'
+# Available values: v1.0, beta
+GRAPH_URL = f'https://graph.microsoft.com/{os.environ.get("API_VERSION", "v1.0")}'
 
 ALLOWED_METHODS = ['get', 'post', 'put', 'patch']
 
-METADATA = os.environ.get('odata_metadata', 'minimal')
+METADATA = os.environ.get('ODATA_METADATA', 'minimal')
 
 __token = None
 
