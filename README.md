@@ -1,4 +1,6 @@
 # azure-ad
+[![Build Status](https://travis-ci.org/sesam-community/azure-ad.svg?branch=master)](https://travis-ci.org/sesam-community/azure-ad)
+
 Sesam datasource and sink uses Microsoft Graph to read and write users and groups to Azure AD
 
 ### Azure AD access 
