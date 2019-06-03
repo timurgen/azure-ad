@@ -9,8 +9,8 @@ To be able to communicate with Azure AD we need to register an applicaiton in Az
 
 Navigate to https://aad.portal.azure.com -> Dashboard -> App Registrations and create new app
 
-You also need to assign required permissions to this app such as `User.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All`  
-read more [here](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=cs)
+You also need to assign required permissions or/and roles to this app such as `User.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All`  
+read more [here](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=cs) and [here](https://stackoverflow.com/questions/52626067/microsoft-graph-api-insufficient-privileges-when-trying-to-update-mobilephone)
 
 This app uses Outh2 authentication with client_credentials. You need to provide next environment variables:
 
