@@ -18,6 +18,8 @@ This app uses Outh2 authentication with client_credentials. You need to provide 
 * `client_secret` - from registered application
 * `tenant_id` - Tenant id my be found in Azure AD properties 
 
+You may control MS Graph API version with environmental variable `API_VERSION`
+
 
 
 ### System setup 
