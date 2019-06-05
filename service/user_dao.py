@@ -42,9 +42,9 @@ def sync_user_array(user_data_array: list) -> None:
         if user_data.get('passwordProfile'):
             del user_data['passwordProfile']
 
-        logging.info(f'trying to update user {user_data.get("userPrincipalName")}')
+        logging.info(f'trying to update user {user_id}')
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', user_data)
-        logging.info(f'user {user_data.get("userPrincipalName")} updated successfully')
+        logging.info(f'user {user_id} updated successfully')
 
     def __try_delete(user_data: dict) -> None:
         """
@@ -58,9 +58,9 @@ def sync_user_array(user_data_array: list) -> None:
         if not user_id:
             raise Exception("Couldn't find id for user, at least id or userPrincipalName needed")
 
-        logging.info(f'trying to disable user {user_data.get("userPrincipalName")}')
+        logging.info(f'trying to disable user {user_id}')
         make_request(f'{GRAPH_URL}{RESOURCE_PATH}{user_id}', 'PATCH', {'accountEnabled': False})
-        logging.info(f'user {user_data.get("userPrincipalName")} disabled successfully')
+        logging.info(f'user {user_id} disabled successfully')
 
     for user in user_data_array:
         if '_deleted' in user and user['_deleted']:
