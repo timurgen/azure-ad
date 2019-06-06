@@ -45,7 +45,7 @@ def list_groups():
     return Response(get_all_groups(r.args.get('since')), content_type=CT)
 
 
-@APP.route('/datasets/<kind>/entities', methods=['GET'])
+@APP.route('/datasets/<path:kind>/entities', methods=['GET'])
 @log_request
 def list_objects(kind):
     """

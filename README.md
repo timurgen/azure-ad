@@ -42,7 +42,7 @@ You may control MS Graph API version with environmental variable `API_VERSION`
 }
 ```
 
-### Setup for "fetch" pipe
+### Setup for "fetch" pipe to retrieve Azure AD users
 
 ```json
 {
@@ -56,6 +56,24 @@ You may control MS Graph API version with environmental variable `API_VERSION`
 }
 
 ```
+
+### Setup for "fetch" pipe to retrieve another resources available through MS Graph API
+**Here used to fetch lists for given Sharepoint site**  
+*you will need `Sites.Read.All` permission to perform this request*
+
+```json
+{
+  "_id": "<pipe id>",
+  "type": "pipe",
+  "source": {
+    "type": "json",
+    "system": "ms-graph-test-service",
+    "url": "/datasets/sites/<sharepoint site id>/lists/entities"
+  }
+}
+
+```
+
 
 ### Setup for "create/update" pipe
 
