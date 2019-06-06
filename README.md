@@ -21,7 +21,7 @@ This app uses Outh2 authentication with client_credentials. You need to provide 
 You may control MS Graph API version with environmental variable `API_VERSION`
 
 
-By default all queries executed with `odata.metadata=minimal`. This behavior may be changed by using  environmental vaariable `ODATA_METADATA` (available values `minimal`,`none`,`full`).
+By default all queries executed with `odata.metadata=minimal`. This behavior may be changed by using  environmental vaariable `ODATA_METADATA` (available values: `none`, `minimal`, `full`).
 
 
 
