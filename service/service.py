@@ -8,7 +8,7 @@ from flask import Flask, Response, request as r
 from str_utils import str_to_bool
 from user_dao import sync_user_array, get_all_users
 from group_dao import sync_group_array, get_all_groups
-from dao_helper import init_dao, get_all_objects
+from dao_helper import init_dao, get_all_objects, init_dao_on_behalf_on
 from logger_helper import log_request
 
 env = os.environ.get
@@ -53,7 +53,11 @@ def list_objects(kind):
     :request_argument since - delta token returned from last request (if exist)
     :return: JSON array with fetched groups
     """
-    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    if r.args.get('auth') and r.args.get('auth') == 'user':
+        init_dao_on_behalf_on(env('client_id'), env('client_secret'), env('tenant_id'), env('username'),
+                              env('password'))
+    else:
+        init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     return Response(
         get_all_objects(f'/{kind}/{"delta" if SUPPORTS_SINCE else ""}', r.args.get('since')),
         content_type=CT)
