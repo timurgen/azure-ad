@@ -12,11 +12,17 @@ Navigate to https://aad.portal.azure.com -> Dashboard -> App Registrations and c
 You also need to assign required permissions or/and roles to this app such as `User.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All`  
 read more [here](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=cs) and [here](https://stackoverflow.com/questions/52626067/microsoft-graph-api-insufficient-privileges-when-trying-to-update-mobilephone)
 
-This app uses Outh2 authentication with client_credentials. You need to provide next environment variables:
+This app uses Outh2 authentication with either `client_credentials` or `password` grant type. You need to provide next environment variables:
 
 * `client_id` - from registered application
 * `client_secret` - from registered application
-* `tenant_id` - Tenant id my be found in Azure AD properties 
+* `tenant_id` - Tenant id my be found in Azure AD properties  
+
+in addition for `password` grant type  
+* `username` - registered user, couldn't be an invited user or user with 2 factor auth turned on
+* `password` - password for this user
+
+By default `client_credentials` schema used for every request, to use `password` schema add query parameter `auth` with value `user` to request.
 
 You may control MS Graph API version with environmental variable `API_VERSION`
 
