@@ -64,3 +64,38 @@ def get_token(client_id, client_secret, tenant_id):
         __token_cache[client_id + tenant_id] = _get_token(client_id, client_secret, tenant_id)
 
     return __token_cache.get(client_id + tenant_id)
+
+
+def get_token_on_behalf_on_user(tenant_id, client_id, client_secret, username, password):
+    """
+    Function to obtain an access_token on behalf on user without signing user in personally (browserless)
+    It uses "resource owner password" auth schema
+    https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth-ropc
+    Only users without 2factor auth could be used for authentication
+    :param client_id: id you get after register new app in Azure AD
+    :param client_secret: secret you get after register new app in Azure AD
+    :param tenant_id: tenant id may be found in Azure Admin Center -> Overview -> Properties
+    :param username: username for an registered user
+    :param password: users password
+    :return: Oauth token object with timestamp of issue
+    """
+    token_url = TOKEN_URL.format(tenant_id)
+    _data = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'scope': 'https://graph.microsoft.com/.default',
+        'tenant': tenant_id,
+        'grant_type': 'password',
+        'username': username,
+        'password': password
+    }
+    response = requests.post(token_url, data=_data, verify=True, allow_redirects=False)
+    print(response.text)
+    response.raise_for_status()
+    token_obj = json.loads(response.text)
+    if not token_obj.get('access_token'):
+        raise Exception("access_token not found in response")
+
+    token_obj['timestamp'] = datetime.datetime.now().timestamp()
+
+    return token_obj
