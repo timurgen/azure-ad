@@ -12,7 +12,7 @@ Navigate to https://aad.portal.azure.com -> Dashboard -> App Registrations and c
 You also need to assign required permissions or/and roles to this app such as `User.ReadWrite.All, Directory.ReadWrite.All, Group.ReadWrite.All`  
 read more [here](https://docs.microsoft.com/en-us/graph/api/user-post-users?view=graph-rest-1.0&tabs=cs) and [here](https://stackoverflow.com/questions/52626067/microsoft-graph-api-insufficient-privileges-when-trying-to-update-mobilephone)
 
-This app uses Outh2 authentication with either `client_credentials` or `password` grant type. You need to provide next environment variables:
+This app uses Outh2 authentication with either `client_credentials`, `code` or `password` grant type. You need to provide next environment variables:
 
 * `client_id` - from registered application
 * `client_secret` - from registered application
@@ -21,6 +21,11 @@ This app uses Outh2 authentication with either `client_credentials` or `password
 in addition for `password` grant type  
 * `username` - registered user, couldn't be an invited user or user with 2 factor auth turned on
 * `password` - password for this user
+
+To be able to use  authorization code flow you need to navigate first to `/auth` endpoint and perform authentication as a user.
+All next requests will then use acquired token and refresh it if needed by using refresh_token.  
+
+**Remember to add correct `redirect_uri` to application properties in Azure.**
 
 By default `client_credentials` schema used for every request, to use `password` schema add query parameter `auth` with value `user` to request.
 
