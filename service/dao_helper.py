@@ -36,6 +36,9 @@ def make_request(url: str, method: str, data=None) -> dict:
     if method.lower() not in ALLOWED_METHODS:
         raise Exception(f'Method {method} is not allowed')
 
+    if not __token:
+        raise ValueError("access token not found, you need to authenticate before")
+
     t_type = __token['token_type']
     t_value = __token['access_token']
 
@@ -66,15 +69,12 @@ def get_all_objects(resource_path: str, delta=None):
     :param resource_path path to needed resource in MS Graph API
     :param delta: delta token from last request.
     More about delta https://docs.microsoft.com/en-us/graph/delta-query-users
-    :return: generate JSON output with all fetched users
+    :return: generated output with all fetched objects
     """
-    first = True
     url = GRAPH_URL + resource_path
 
     if delta:
         url += f'?$deltatoken={delta}'
-
-    yield '['
 
     while url is not None:
         result = make_request(url, 'get')
@@ -86,18 +86,43 @@ def get_all_objects(resource_path: str, delta=None):
             query = parse_qs(parsed_url.query)
             delta = query['$deltatoken'][0]
 
-        for item in result['value']:
-            if not first:
-                yield ','
-            else:
-                first = False
-
-            item['_updated'] = delta
-            item['_id'] = item['id']
-
-            yield json.dumps(item)
+        if result.get('value'):
+            for item in result['value']:
+                item['_updated'] = delta
+                item['_id'] = item['id']
+                yield item
+        else:
+            raise ValueError('value object expected in response')
 
         url = result.get('@odata.nextLink', None)
+
+
+def get_object(resource_path):
+    url = GRAPH_URL + resource_path
+    result = make_request(url, 'get')
+
+    logging.debug(f"Got response: {json.dumps(result, indent=4, sort_keys=True)}")
+
+    return result
+
+
+def stream_as_json(generator_function):
+    """
+    Stream list of objects as JSON array
+    :param generator_function:
+    :return:
+    """
+    first = True
+
+    yield '['
+
+    for item in generator_function:
+        if not first:
+            yield ','
+        else:
+            first = False
+
+        yield json.dumps(item)
 
     yield ']'
 
