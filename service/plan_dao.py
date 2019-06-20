@@ -14,6 +14,7 @@ def get_plans_for_group(group_id):
     try:
         yield from get_all_objects(f'/groups/{group_id}/planner/plans')
     except requests.exceptions.HTTPError:
+        # already logged in make_request function, no action needed
         pass
 
 
