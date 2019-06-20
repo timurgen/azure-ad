@@ -1,6 +1,6 @@
 import logging
 from dao_helper import get_all_objects, make_request, GRAPH_URL, is_object_already_exists_exception, \
-    clear_sesam_attributes
+    clear_sesam_attributes, stream_as_json
 
 RESOURCE_PATH = '/groups/'
 
@@ -66,4 +66,4 @@ def get_all_groups(delta=None):
     :param delta: delta token from last request
     :return: generated JSON output with all fetched groups
     """
-    yield from get_all_objects(f'{RESOURCE_PATH}delta', delta)
+    yield from stream_as_json(get_all_objects(f'{RESOURCE_PATH}delta', delta))
