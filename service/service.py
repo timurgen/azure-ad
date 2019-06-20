@@ -8,10 +8,11 @@ import uuid
 from flask import Flask, Response, request as r, redirect, session
 
 from auth_helper import get_authorize_url, get_token_with_auth_code, add_token_to_cache
+from plan_dao import get_plans
 from str_utils import str_to_bool
 from user_dao import sync_user_array, get_all_users
 from group_dao import sync_group_array, get_all_groups
-from dao_helper import init_dao, get_all_objects, init_dao_on_behalf_on
+from dao_helper import init_dao, get_all_objects, init_dao_on_behalf_on, stream_as_json
 from logger_helper import log_request
 
 env = os.environ.get
@@ -65,8 +66,19 @@ def list_objects(kind):
     else:
         init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     return Response(
-        get_all_objects(f'/{kind}/{"delta" if SUPPORTS_SINCE else ""}', r.args.get('since')),
+        stream_as_json(get_all_objects(f'/{kind}/{"delta" if SUPPORTS_SINCE else ""}', r.args.get('since'))),
         content_type=CT)
+
+
+@APP.route('/groups/plans/entities', methods=['GET'])
+@log_request
+def list_all_plans():
+    """
+    Endpoint to list all plans from Microsoft Planner service
+    :return:
+    """
+    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    return Response(stream_as_json(get_plans(get_all_objects('/groups/'))), r.args.get('since'), content_type=CT)
 
 
 @APP.route('/datasets/user', methods=['POST'])
