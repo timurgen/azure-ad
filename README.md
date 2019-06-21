@@ -99,7 +99,25 @@ By default all queries executed with `odata.metadata=minimal`. This behavior may
   "source": {
     "type": "json",
     "system": "ms-graph-test-service",
-    "url": "/groups/plans/entities"
+    "url": "/planner/plans/entities"
+  }
+}
+
+```
+
+
+### Setup for "fetch" pipe to retrieve Microsoft Planner tasks through MS Graph API
+*Some of groups may throw 403 exception which is logged but swallowed so pipe don't receive any error*
+*Check system log after fetching plans to be sure if everything is ok*
+
+```json
+{
+  "_id": "<pipe id>",
+  "type": "pipe",
+  "source": {
+    "type": "json",
+    "system": "ms-graph-test-service",
+    "url": "/planner/tasks/entities"
   }
 }
 

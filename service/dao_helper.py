@@ -86,13 +86,13 @@ def get_all_objects(resource_path: str, delta=None):
             query = parse_qs(parsed_url.query)
             delta = query['$deltatoken'][0]
 
-        if result.get('value'):
+        if type(result.get('value')) == list:
             for item in result['value']:
                 item['_updated'] = delta
                 item['_id'] = item['id']
                 yield item
         else:
-            raise ValueError('value object expected in response')
+            raise ValueError(f'value object expected in response to url: {url} got {result}')
 
         url = result.get('@odata.nextLink', None)
 
