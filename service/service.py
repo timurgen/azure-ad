@@ -77,14 +77,22 @@ def list_all_plans():
     Endpoint to list all plans from Microsoft Planner service
     :return:
     """
-    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    if r.args.get('auth') and r.args.get('auth') == 'user':
+        init_dao_on_behalf_on(env('client_id'), env('client_secret'), env('tenant_id'), env('username'),
+                              env('password'))
+    else:
+        init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     return Response(stream_as_json(get_plans(get_all_objects('/groups/'))), r.args.get('since'), content_type=CT)
 
 
 @APP.route('/planner/tasks/entities', methods=['GET'])
 @log_request
 def list_all_tasks():
-    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    if r.args.get('auth') and r.args.get('auth') == 'user':
+        init_dao_on_behalf_on(env('client_id'), env('client_secret'), env('tenant_id'), env('username'),
+                              env('password'))
+    else:
+        init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     return Response(stream_as_json(get_tasks(get_plans(get_all_objects('/groups/')))), content_type=CT)
 
 
@@ -95,7 +103,11 @@ def post_users():
     Endpoint to synchronize users from Sesam into Azure AD
     :return: 200 empty response if everything OK
     """
-    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    if r.args.get('auth') and r.args.get('auth') == 'user':
+        init_dao_on_behalf_on(env('client_id'), env('client_secret'), env('tenant_id'), env('username'),
+                              env('password'))
+    else:
+        init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     sync_user_array(json.loads(r.data))
     return Response('')
 
@@ -107,7 +119,11 @@ def post_groups():
     Endpoint to synchronize groups from Sesam into Azure AD
     :return: 200 empty response if everything OK
     """
-    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    if r.args.get('auth') and r.args.get('auth') == 'user':
+        init_dao_on_behalf_on(env('client_id'), env('client_secret'), env('tenant_id'), env('username'),
+                              env('password'))
+    else:
+        init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     sync_group_array(json.loads(r.data))
     return Response('')
 
