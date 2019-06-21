@@ -8,7 +8,7 @@ import uuid
 from flask import Flask, Response, request as r, redirect, session
 
 from auth_helper import get_authorize_url, get_token_with_auth_code, add_token_to_cache
-from plan_dao import get_plans
+from plan_dao import get_plans, get_tasks
 from str_utils import str_to_bool
 from user_dao import sync_user_array, get_all_users
 from group_dao import sync_group_array, get_all_groups
@@ -70,7 +70,7 @@ def list_objects(kind):
         content_type=CT)
 
 
-@APP.route('/groups/plans/entities', methods=['GET'])
+@APP.route('/planner/plans/entities', methods=['GET'])
 @log_request
 def list_all_plans():
     """
@@ -79,6 +79,13 @@ def list_all_plans():
     """
     init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
     return Response(stream_as_json(get_plans(get_all_objects('/groups/'))), r.args.get('since'), content_type=CT)
+
+
+@APP.route('/planner/tasks/entities', methods=['GET'])
+@log_request
+def list_all_tasks():
+    init_dao(env('client_id'), env('client_secret'), env('tenant_id'))
+    return Response(stream_as_json(get_tasks(get_plans(get_all_objects('/groups/')))), content_type=CT)
 
 
 @APP.route('/datasets/user', methods=['POST'])
