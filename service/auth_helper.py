@@ -99,7 +99,7 @@ def get_token(client_id, client_secret, tenant_id):
     ts = datetime.datetime.now().timestamp()
 
     if not token or token['timestamp'] + token['expires_in'] + 5 < ts:
-        if 'refresh_token' in token:
+        if token and 'refresh_token' in token:
             r_token = token['refresh_token']
             __token_cache[client_id + tenant_id] = _refresh_token(client_id, client_secret, tenant_id, r_token)
         else:
